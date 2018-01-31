@@ -1,0 +1,205 @@
+---
+title: "Soft Sediment Summaries"
+author: "Ben Millard-Martin"
+date: '`r date()`'
+output:
+  html_document:
+    theme: cosmo
+    code_folding: hide
+    toc: true
+    toc_float: true
+    echo: true
+    collapse: true
+---
+
+# Setup
+
+These blocks of code sets base for the subsequent analyses:  
+- loads all necessary packages   
+- set working directory  
+- read in diversity abundance, diversity length, ysi and habitat  
+- create wide data for Vegan package  
+- recreate long data with 0 observations  
+- clean ysi data(remove duplicates)  
+- create wide temperature data from ysi data   
+- merge temperature and habitat data with diversity abundance  
+- assign levels and names to month objects  
+Set working directory
+Read in data
+Reformat data  
+- create wide data  
+- clean YSI data  
+- extract temperature data  
+- merge temperature and habitat data with diversity abundance data  
+- create new month labels
+ Load Packages
+```{r, message=FALSE, warning= FALSE}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_base.R")
+```
+
+# Overview
+This document provides a summary of soft sediment sampling completed on Calvert Island from 2016-2017. It contains summaries of the bivalves, benthic invertebrates(meiofauna), macrophytes and sediment chlorophyll content at six sites in Pruth Bay. A summary of seasonal temperature is also provided here. Seasonal sites and protocols changed between 2016 and 2017. 
+
+A site sampling event comprised of random sample locations within the site boundaries. At these sample locations macrophyte diversity and cover, invertebrate diversity and abundance and bivalve diversity, abundance and size data were recorded. 
+
+In 2016 seasonal sites were Clam Garden Reference(hcg), Marten Beach(marten) and Piles Beach(piles). In 2017 Clam Garden Reference was replaced with Pruth Bay East(pbe) due to difficulties in controlling sampling effort. The 2016 methods used five 0.5m x 0.5m PVC quadrats for bivalves and were excavated to a depth of 20cm for each site sampling event.The 2017 methods used 15 0.25m x 0.25m steel box quadrats for bivalves and were excavated to a depth of 10cm for each site sampling event. For further details on the methods please see protocol documents.  
+
+Due to the diffenences in methodology between years, count data cannot be directly compared because of differences in effort. Bivalve abundance is therefore presented as densities rather than counts per quadrat or site visit. These summaries also provide insight into diffences between methods and the potential limitations of either method. 
+
+Sites were visited monthly or bimonthly(every two months) from June to September with winter sampling events in November and February. 
+
+# Bivalves {.tabset}
+Bivalve diversity abundance and size data are presented in several different formats. Abundance is corrected for differences in sampling effort between years. All bivalves were identified to species aside from _Macoma spp._ less than 15mm. _Macoma spp._ less than 15mm are identified as unknown Macoma. 
+
+## Diversity {.tabset}
+
+```{r, message=FALSE, warning= FALSE}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_diversity.R")
+```
+
+```{r}
+bivalve_species_accumulation
+```
+Bivalve species accumulation curve. 
+
+```{r}
+bivalve_seasonal_species_richness
+```
+Seasonal species richness for 2016 and 2017.
+
+```{r}
+bivalve_seasonal_shannons
+```
+Seasonal diversity (Shannons H) for 2016 and 2017.
+
+```{r}
+bivalve_tidal_richness
+```
+Species richness by tide height and year. Tide height is measured as meters above chart datum(mean low tide). Tide height was restricted to 1.85m in 2016.
+
+```{r}
+bivalve_tidal_abundance
+```
+Bivalve abundance by tide height and year. Tide height is measured as meters above chart datum(mean low tide). Tide height was restricted to 1.85m in 2016.
+
+## Individual Species {.tabset}
+
+### Abundances {.tabset}
+```{r}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_individual.R")
+```
+
+#### Baltic macoma
+```{r}
+bama
+```
+
+#### Bent-nose macoma 
+```{r}
+beno
+```
+
+#### Butter clam
+```{r}
+bucl
+```
+
+#### Nuttall's cockle
+```{r}
+cocl
+```
+
+#### Japanese littleneck clam
+```{r}
+jlne
+```
+
+#### Kennerley's venus
+```{r, message=FALSE, warning= FALSE}
+keve
+```
+
+#### Softshell clam
+```{r}
+myac
+```
+
+#### Pacific littleneck clam
+```{r}
+plne
+```
+
+#### Pointed macoma
+```{r}
+pmac
+```
+
+#### Juvenile macoma
+Pointend and/or bent-nose macoma.
+```{r}
+umac
+```
+
+### Length {.tabset}
+Focus on second figure. I can figure out how to hide first figure.
+
+```{r, results="hide"}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_length.R")
+```
+
+#### Baltic macoma
+```{r, message=FALSE, warning= FALSE, results= "hide",fig.height = 7, fig.width = 15}
+lfq_year_month("bama", "")
+```
+
+#### Bent-nose macoma 
+```{r, message=FALSE, warning= FALSE, results= "hide",fig.height = 7, fig.width = 15}
+lfq_year_month("beno", "")
+```
+
+#### Butter clam
+```{r, message=FALSE, warning= FALSE, results= "hide",fig.height = 7, fig.width = 15}
+lfq_year_month("bucl", "")
+```
+
+#### Nuttall's cockle
+```{r, message=FALSE, warning= FALSE, results= "hide",fig.height = 7, fig.width = 15}
+lfq_year_month("cocl", "")
+```
+
+#### Japanese littleneck clam
+```{r, message=FALSE, warning= FALSE, results= "hide",fig.height = 7, fig.width = 15}
+lfq_year_month("jlne", "")
+```
+
+#### Kennerley's venus
+```{r, message=FALSE, warning= FALSE, results= "hide",fig.height = 7, fig.width = 15}
+lfq_year_month("keve", "")
+```
+
+#### Softshell clam
+```{r, message=FALSE, warning= FALSE, results= "hide",fig.height = 7, fig.width = 15}
+lfq_year_month("myac", "")
+```
+
+#### Pacific littleneck clam
+```{r, message=FALSE, warning= FALSE, results= "hide",fig.height = 7, fig.width = 15}
+lfq_year_month("plne", "")
+```
+
+#### Pointed macoma
+```{r, message=FALSE, warning= FALSE, results= "hide",fig.height = 7, fig.width = 15}
+lfq_year_month("pmac", "umac")
+```
+
+#### Juvenile macoma growth
+```{r}
+mean_length_seasonal("umac",2017)
+```
+
+### Community NMDS {.tabset}
+
+```{r, message=FALSE, warning= FALSE, results="hide"}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_NMDS.R")
+```
+

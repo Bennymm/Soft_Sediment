@@ -17,7 +17,7 @@ library("lubridate", lib.loc="~/R/win-library/3.4")
 library("TropFishR", lib.loc="~/R/win-library/3.4")
 
 # set working directory
-setwd("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files")
+#setwd("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files")
 
 # read in data
 bivalves      <- read.csv ("bivalves.csv")
@@ -58,9 +58,9 @@ bi.long$abundance_modified <- if_else(bi.long$year == 2016,
                                               bi.long$abundance),
                                       bi.long$abundance)
 
-#wide data with effort correction; was bi.wde.core if other scripts aren't working
-bi.wide <- bi.long %>%
-  group_by(year, month, day, site, elevation, quad, species) %>%
+#wide data wit effort correction
+bi.wide.cor <- bi.long %>%
+  group_by(year, month, day, site, elevation, species) %>%
   summarise(abundance = mean(abundance_modified)) %>%
   spread("species", "abundance")
 

@@ -1,0 +1,306 @@
+#This block of code contains initial data imports, manipulations and reformatting.
+#These processes may include but are not limited to: merging, transposing,
+#summarising, new variable derivation, renaming and variable 'type'
+#conversions. This script must be run before other subsequent scripts.
+#load packages
+library("tidyverse", lib.loc="~/R/win-library/3.4")
+library("dplyr", lib.loc="~/R/win-library/3.4")
+library("vegan", lib.loc="~/R/win-library/3.4")
+library("BiodiversityR", lib.loc="~/R/win-library/3.4")
+library("knitr", lib.loc="~/R/win-library/3.4")
+library("yaml", lib.loc="~/R/win-library/3.4")
+library("markdown", lib.loc="~/R/win-library/3.4")
+library("MASS", lib.loc="~/R/win-library/3.4")
+library("magrittr", lib.loc="~/R/win-library/3.4")
+library("lubridate", lib.loc="~/R/win-library/3.4")
+library("TropFishR", lib.loc="~/R/win-library/3.4")
+# set working directory
+setwd("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files")
+# read in data
+bivalves      <- read.csv ("bivalves.csv")
+# coerce some variables to type 'character'
+bivalves$elevation <-
+as.character(bivalves$elevation)
+bivalves$species <-
+as.character(bivalves$species)
+#create y.m.d date variable for TropFishR (length frequency data)
+bivalves$date <- ymd(paste(bivalves$year, bivalves$month, bivalves$day))
+### count of species by quadtrat
+bi.wide <- bivalves %>%
+group_by(year, month, day, site, elevation, quad, species) %>%
+summarise(abundance = length(species)) %>%
+spread("species", "abundance")
+# replace n/a with 0's
+bi.wide[is.na(bi.wide)] <- 0
+# create long data with null observations
+bi.long <- gather(bi.wide, species, abundance, bama:umac)
+#create character for month
+bi.wide$month <- factor(bi.wide$month,
+levels = c(1,2,3,4,5,6,7,8,9,10,11,12),
+labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+bi.long$month <- factor(bi.long$month,
+levels = c(1,2,3,4,5,6,7,8,9,10,11,12),
+labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+#pseudo-standardize effort: reduce 2016 values by a factor of 4; equal area
+bi.long$abundance_modified <- if_else(bi.long$year == 2016,
+bi.long$abundance / 4,
+if_else(bi.long$year == 2017 & bi.long$month == "Feb",
+bi.long$abundance / 4,
+bi.long$abundance),
+bi.long$abundance)
+#wide data wit effort correction
+bi.wide.cor <- bi.long %>%
+group_by(year, month, day, site, elevation, species) %>%
+summarise(abundance = mean(abundance_modified)) %>%
+spread("species", "abundance")
+#for mean seasonal length of individual species
+bi.length.y.m.s <-
+group_by(bivalves, year, month, site, species)  %>%
+summarise(se = sd(length, na.rm = TRUE)/sqrt((length(length))), length = mean(length, na.rm = TRUE))
+bi.length.y.m.s$month <- factor(bi.length.y.m.s$month,
+levels = c(1,2,3,4,5,6,7,8,9,10,11,12),
+labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+#for seasonal abundance of individual species
+bi.long.y.m.s.s <-bi.long %>%
+group_by(year, month, site, species) %>%
+summarise(se = sd(abundance_modified, na.rm = TRUE)/sqrt((length(species))), abundance = mean(abundance_modified, na.rm = TRUE))
+#new column; shannon H
+bi.wide$shan <- diversity(
+bi.wide[(which(colnames(bi.wide) == "bama")) :
+(which(colnames(bi.wide) == "umac"))],
+index = "shannon")
+#new column; species abundance
+bi.wide$abundance<- specnumber(
+bi.wide[(which(colnames(bi.wide) == "bama")) :
+(which(colnames(bi.wide) == "umac"))])
+specaccum(bi.wide[
+(which(colnames(bi.wide) == "bama")) :
+(which(colnames(bi.wide) == "umac"))]) %>%
+plot(ci.type="polygon", ci.col="lightyellow", xlab = "site visits", ylab = "species number")
+#bivalve diversity(shannons and spp.richness) by site and month; all sites
+#abundance
+bi.wide %>%
+group_by(year, month, site) %>%
+summarise_at(vars(shan:abundance), mean) %>%
+ggplot() +
+aes(x = month, y = abundance, colour = site, group = site) +
+geom_point() +
+ylim(0, 8) +
+geom_line() +
+theme_bw() +
+facet_wrap(~year) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+#legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1))+
+labs(x = "Month", y = expression("Richness" ~ "(average species count/site visit)"))
+#shannons H
+bi.wide %>%
+group_by(year, month, site) %>%
+summarise_at(vars(shan:abundance), mean) %>%
+ggplot() +
+aes(x = month, y = shan, colour = site, group = site) +
+geom_point() +
+ylim(0, 3) +
+geom_line() +
+theme_bw() +
+facet_wrap(~year) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+#legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1))+
+labs(x = "Month", y = expression("Shannons H"))
+#bivalve species abundance by tide height and year
+bi.wide %>%
+group_by(year, elevation) %>%
+ggplot() +
+aes(x = elevation, y = abundance, group= elevation) +
+geom_boxplot() +
+theme_bw() +
+facet_wrap(~year) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1))+
+labs(x = "tide height (m)", y = expression("Richness" ~ "(average species count/site visit)"))
+#bivalve abundance by tide height and year: effort corrected
+bi.long %>%
+group_by(year, month, day, site, elevation, quad) %>%
+summarise(abundance = sum(abundance_modified, na.rm = TRUE)) %>%
+group_by(year, elevation) %>%
+ggplot() +
+aes(x = elevation, y = abundance, group= elevation) +
+geom_boxplot() +
+theme_bw() +
+facet_wrap(~year) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1))+
+labs(x = "tide height (m)", y = expression("Bivalve abundance" ~ "(mean count/quadrat)"))
+#bivalve diversity(shannons and spp.richness) by site and month; all sites
+#abundance
+bi.wide %>%
+group_by(year, month, site) %>%
+summarise_at(vars(shan:abundance), mean) %>%
+ggplot() +
+aes(x = month, y = abundance, colour = site, group = site) +
+geom_point() +
+ylim(0, 8) +
+geom_line() +
+theme_bw() +
+facet_wrap(~year) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+#legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1))+
+labs(x = "Month", y = expression("Richness" ~ "(average species count/site visit)"))
+#load packages
+library("tidyverse", lib.loc="~/R/win-library/3.4")
+library("dplyr", lib.loc="~/R/win-library/3.4")
+library("vegan", lib.loc="~/R/win-library/3.4")
+library("BiodiversityR", lib.loc="~/R/win-library/3.4")
+library("knitr", lib.loc="~/R/win-library/3.4")
+library("yaml", lib.loc="~/R/win-library/3.4")
+library("markdown", lib.loc="~/R/win-library/3.4")
+library("MASS", lib.loc="~/R/win-library/3.4")
+library("magrittr", lib.loc="~/R/win-library/3.4")
+library("lubridate", lib.loc="~/R/win-library/3.4")
+library("TropFishR", lib.loc="~/R/win-library/3.4")
+library("tidyverse", lib.loc="~/R/win-library/3.4")
+library("tidyverse", lib.loc="~/R/win-library/3.4")
+library("dplyr", lib.loc="~/R/win-library/3.4")
+library("vegan", lib.loc="~/R/win-library/3.4")
+library("BiodiversityR", lib.loc="~/R/win-library/3.4")
+library("knitr", lib.loc="~/R/win-library/3.4")
+library("yaml", lib.loc="~/R/win-library/3.4")
+library("markdown", lib.loc="~/R/win-library/3.4")
+library("MASS", lib.loc="~/R/win-library/3.4")
+library("MASS", lib.loc="~/R/win-library/3.4")
+library("MASS", lib.loc="~/R/win-library/3.4")
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_diversity.R")
+#bivalve diversity(shannons and spp.richness) by site and month; all sites
+#This is a comparison of seasonal diversity, but also acts as a comparison between years
+#abundance
+bi.wide %>%
+group_by(year, month, site) %>%
+summarise_at(vars(shan:abundance), mean) %>%
+ggplot() +
+aes(x = month, y = abundance, colour = site, group = site) +
+geom_point() +
+ylim(0, 8) +
+geom_line() +
+theme_bw() +
+facet_wrap(~year) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+#legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1))+
+labs(x = "Month", y = expression("Richness" ~ "(average species count/site visit)"), title = Seasonal Abundance)
+#bivalve diversity(shannons and spp.richness) by site and month; all sites
+#This is a comparison of seasonal diversity, but also acts as a comparison between years
+#abundance
+bi.wide %>%
+group_by(year, month, site) %>%
+summarise_at(vars(shan:abundance), mean) %>%
+ggplot() +
+aes(x = month, y = abundance, colour = site, group = site) +
+geom_point() +
+ylim(0, 8) +
+geom_line() +
+theme_bw() +
+facet_wrap(~year) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+#legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1))+
+labs(x = "Month", y = expression("Richness" ~ "(average species count/site visit)"), title = "Seasonal Abundance")
+#bivalve species abundance by tide height and year
+bi.wide %>%
+group_by(year, elevation) %>%
+ggplot() +
+aes(x = elevation, y = abundance, group= elevation) +
+geom_boxplot() +
+theme_bw() +
+facet_wrap(~year) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1))+
+labs(x = "tide height (m)", y = expression("Richness" ~ "(average species count/site visit)"))
+#bivalve abundance by tide height and year: effort corrected
+bi.long %>%
+group_by(year, month, day, site, elevation, quad) %>%
+summarise(abundance = sum(abundance_modified, na.rm = TRUE)) %>%
+group_by(year, elevation) %>%
+ggplot() +
+aes(x = elevation, y = abundance, group= elevation) +
+geom_boxplot() +
+theme_bw() +
+facet_wrap(~year) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1))+
+labs(x = "tide height (m)", y = expression("Bivalve abundance" ~ "(mean count/quadrat)"))
+#bivalve abundance by tide height and year: effort corrected
+bi.long %>%
+group_by(year, month, day, site, elevation, quad) %>%
+summarise(abundance = sum(abundance_modified, na.rm = TRUE)) %>%
+group_by(year, elevation) %>%
+ggplot() +
+aes(x = elevation, y = abundance, group= elevation) +
+geom_boxplot() +
+theme_bw() +
+facet_wrap(~year) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1))+
+labs(x = "tide height (m)", y = expression("Bivalve abundance" ~ "(mean count/quadrat)"), title = "Total Bivalve Abundance by Tide Height")
+abundance_seasonal <- function(Species){
+filter(bi.long.y.m.s.s, species == Species) %>%
+filter(year != "2018") %>%
+filter(abundance > 0) %>%
+ggplot() +
+aes(x = month, y = abundance, colour = site, group = site) +
+geom_point(size = 2.5, position = position_dodge(width = 0.25)) +
+geom_line( position = position_dodge(width = 0.25)) +
+facet_wrap(~year)+
+theme_bw() +
+geom_errorbar(aes(ymin = abundance - se,
+ymax = abundance + se),
+width = 0,
+size = 1,
+position = position_dodge(width = 0.25)) +
+theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+#legend.position  = "none",
+panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+text             = element_text(size = 13, vjust = 0.1)) +
+labs(x = "Month", y = expression(Density ~ "(mean count/0.065m"^"2)"))
+}
+#execute above function
+abundance_seasonal("bama")
+abundance_seasonal("umac")
+abundance_seasonal("beno")
+rm(list=ls())
+#load packages
+library("tidyverse", lib.loc="~/R/win-library/3.4")
+#load packages
+library("tidyverse", lib.loc="~/R/win-library/3.4")
+#load packages
+library("tidyverse", lib.loc="~/R/win-library/3.4")
+#load packages
+library("tidyverse", lib.loc="~/R/win-library/3.4")
+sessionInfo()

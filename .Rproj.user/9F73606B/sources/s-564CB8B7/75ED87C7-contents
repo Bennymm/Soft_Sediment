@@ -1,0 +1,151 @@
+---
+title: "Soft Sediment Summaries"
+author: "Ben Millard-Martin"
+date: '`r date()`'
+output:
+  html_document:
+    theme: cosmo
+    code_folding: hide
+    toc: true
+    toc_float: true
+    echo: true
+    collapse: true
+---
+
+# Setup
+
+These blocks of code sets base for the subsequent analyses:  
+- loads all necessary packages   
+- set working directory  
+- read in diversity abundance, diversity length, ysi and habitat  
+- create wide data for Vegan package  
+- recreate long data with 0 observations  
+- clean ysi data(remove duplicates)  
+- create wide temperature data from ysi data   
+- merge temperature and habitat data with diversity abundance  
+- assign levels and names to month objects  
+Set working directory
+Read in data
+Reformat data  
+- create wide data  
+- clean YSI data  
+- extract temperature data  
+- merge temperature and habitat data with diversity abundance data  
+- create new month labels
+ Load Packages
+```{r, message=FALSE, warning= FALSE}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_base.R")
+```
+
+# Overview
+This document provides a summary of soft sediment sampling completed on Calvert Island from 2016-2017. It contains summaries of the bivalves, benthic invertebrates(meiofauna), macrophytes and sediment chlorophyll content at six sites in Pruth Bay. A summary of seasonal temperature is also provided here. Seasonal sites and protocols changed between 2016 and 2017. 
+
+A site sampling event comprised of random sample locations within the site boundaries. At these sample locations macrophyte diversity and cover, invertebrate diversity and abundance and bivalve diversity, abundance and size data were recorded. 
+
+In 2016 seasonal sites were Clam Garden Reference(hcg), Marten Beach(marten) and Piles Beach(piles). In 2017 Clam Garden Reference was replaced with Pruth Bay East(pbe) due to difficulties in controlling sampling effort. The 2016 methods used five 0.5m x 0.5m PVC quadrats for bivalves and were excavated to a depth of 20cm for each site sampling event.The 2017 methods used 15 0.25m x 0.25m steel box quadrats for bivalves and were excavated to a depth of 10cm for each site sampling event. For further details on the methods please see protocol documents.  
+
+Due to the diffenences in methodology between years, count data cannot be directly compared because of differences in effort. Bivalve abundance is therefore presented as densities rather than counts per quadrat or site visit. These summaries also provide insight into diffences between methods and the potential limitations of either method. 
+
+Sites were visited monthly or bimonthly(every two months) from June to September with winter sampling events in November and February. 
+
+# Bivavles {.tabset}
+Bivalve diversity abundance and size data are presented in several different formats. Abundance is corrected for differences in sampling effort between years. All bivalves were identified to species aside from _Macoma spp._ less than 15mm. _Macoma spp._ less than 15mm are identified as unknown Macoma. 
+
+## Diversity
+
+```{r, message=FALSE, warning= FALSE}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_diversity.R")
+```
+
+```{r, message=FALSE, warning= FALSE}
+#Run "bivalve_base.R" first
+
+#Summaries of species richness and diversity.
+
+#new column; shannon H
+bi.wide$shan <- diversity(
+  bi.wide[(which(colnames(bi.wide) == "bama")) : 
+          (which(colnames(bi.wide) == "umac"))],
+  index = "shannon")
+
+#new column; species abundance
+bi.wide$abundance<- specnumber(
+  bi.wide[(which(colnames(bi.wide) == "bama")) :
+          (which(colnames(bi.wide) == "umac"))])
+
+specaccum(bi.wide[
+  (which(colnames(bi.wide) == "bama")) : 
+  (which(colnames(bi.wide) == "umac"))]) %>%
+  plot(ci.type="polygon", ci.col="lightyellow", xlab = "site visits", ylab = "species number")
+
+#bivalve diversity(shannons and spp.richness) by site and month; all sites
+#This is a comparison of seasonal diversity, but also acts as a comparison between years
+#abundance
+bi.wide %>% 
+  group_by(year, month, site) %>%
+  summarise_at(vars(shan:abundance), mean) %>%
+ggplot() +
+  aes(x = month, y = abundance, colour = site, group = site) +
+  geom_point() +
+  ylim(0, 8) +
+  geom_line() +
+  theme_bw() +
+  facet_wrap(~year) +
+  theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+        #legend.position  = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        text             = element_text(size = 13, vjust = 0.1))+
+  labs(x = "Month", y = expression("Richness" ~ "(average species count/site visit)"), title = "Seasonal Species Richness")
+
+#shannons H
+bi.wide %>% 
+  group_by(year, month, site) %>%
+  summarise_at(vars(shan:abundance), mean) %>%
+  ggplot() +
+  aes(x = month, y = shan, colour = site, group = site) +
+  geom_point() +
+  ylim(0, 3) +
+  geom_line() +
+  theme_bw() +
+  facet_wrap(~year) +
+  theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+        #legend.position  = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        text             = element_text(size = 13, vjust = 0.1))+
+  labs(x = "Month", y = expression("Shannons H"), title = "Seasonal Shannons H")
+
+#bivalve species abundance by tide height and year
+bi.wide %>%
+  group_by(year, elevation) %>%
+  ggplot() +
+  aes(x = elevation, y = abundance, group= elevation) +
+  geom_boxplot() +
+  theme_bw() +
+  facet_wrap(~year) +
+  theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+        legend.position  = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+                text             = element_text(size = 13, vjust = 0.1))+
+  labs(x = "tide height (m)", y = expression("Richness" ~ "(average species count/site visit)"), title = "Species Richness by Tide Height")
+
+#bivalve abundance by tide height and year: effort corrected
+bi.long %>% 
+  group_by(year, month, day, site, elevation, quad) %>%
+  summarise(abundance = sum(abundance_modified, na.rm = TRUE)) %>%
+  group_by(year, elevation) %>%
+  ggplot() +
+  aes(x = elevation, y = abundance, group= elevation) +
+  geom_boxplot() +
+  theme_bw() +
+  facet_wrap(~year) +
+  theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+        legend.position  = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        text             = element_text(size = 13, vjust = 0.1))+
+  labs(x = "tide height (m)", y = expression("Bivalve abundance" ~ "(mean count/quadrat)"), title = "Total Bivalve Abundance by Tide Height")
+
+```

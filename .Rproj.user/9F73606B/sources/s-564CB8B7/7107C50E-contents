@@ -2,7 +2,7 @@
 
 #function summarising individual bivalve densities.
 
-abundance_seasonal <- function(Species, Title){
+abundance_seasonal <- function(Species){
   filter(bi.long.y.m.s.s, species == Species) %>%
     filter(year != "2018") %>%
     filter(abundance > 0) %>%
@@ -22,31 +22,9 @@ abundance_seasonal <- function(Species, Title){
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           text             = element_text(size = 13, vjust = 0.1)) +
-    labs(x = "Month", y = expression(Density ~ "(mean count/0.065m"^"2)"), title = Title)
+    labs(x = "Month", y = expression(Density ~ "(mean count/0.065m"^"2)"))
 }
 #execute above function
-
-bama <-
-abundance_seasonal("bama",expression(italic(Limecola~balthica)))
-beno <-
-abundance_seasonal("beno",expression(italic(Macoma~nasuta)))
-bucl <-
-abundance_seasonal("bucl",expression(italic(Saxidomus~gigantea)))
-cocl <-
-abundance_seasonal("cocl",expression(italic(Clinocardium~nuttallii)))
-jlne <-
-abundance_seasonal("jlne",expression(italic(Venerupis~philippinarum)))
-keve <-
-abundance_seasonal("keve",expression(italic(Humilaria~kennerlyi)))
-myac <-
-abundance_seasonal("myac",expression(italic(Mya~arenaria)))
-plne <-
-abundance_seasonal("plne",expression(italic(Leukoma~staminea)))
-pmac <-
-abundance_seasonal("pmac",expression(italic(Macoma~inquinata)))
-#puve <-
-#abundance_seasonal("puve",expression(italic(?????????????)))
-umac <-
-abundance_seasonal("umac",expression(italic(Macoma~spp.)))
-
-
+abundance_seasonal("bama")
+abundance_seasonal("umac")
+abundance_seasonal("beno")

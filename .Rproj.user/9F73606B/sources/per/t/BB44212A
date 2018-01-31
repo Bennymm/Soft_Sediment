@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1517328876057.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2898486463",
+    "id" : "BB44212A",
+    "lastKnownWriteTime" : 1517251234,
+    "last_content_update" : 1517251234,
+    "path" : "C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_Sediment/bivalve_NMDS.R",
+    "project_path" : "bivalve_NMDS.R",
+    "properties" : {
+        "cursorPosition" : "25,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

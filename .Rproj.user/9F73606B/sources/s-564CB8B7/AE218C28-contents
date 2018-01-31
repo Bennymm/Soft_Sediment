@@ -1,7 +1,6 @@
 #Run "bivalve_base.R" first
+
 #Summaries of species richness and diversity.
-#figures are objects; must be called
-#corrected abundances are only used for abundance calculations
 
 #new column; shannon H
 bi.wide$shan <- diversity(
@@ -14,22 +13,18 @@ bi.wide$abundance<- specnumber(
   bi.wide[(which(colnames(bi.wide) == "bama")) :
           (which(colnames(bi.wide) == "umac"))])
 
-bivalve_species_accumulation <-
 specaccum(bi.wide[
   (which(colnames(bi.wide) == "bama")) : 
   (which(colnames(bi.wide) == "umac"))]) %>%
-  plot(ci.type="polygon", ci.col="lightyellow", xlab = "quadrats", ylab = "species number")
-
+  plot(ci.type="polygon", ci.col="lightyellow", xlab = "site visits", ylab = "species number")
 
 #bivalve diversity(shannons and spp.richness) by site and month; all sites
 #This is a comparison of seasonal diversity, but also acts as a comparison between years
-
 #abundance
-bivalve_seasonal_species_richness <- 
 bi.wide %>% 
   group_by(year, month, site) %>%
   summarise_at(vars(shan:abundance), mean) %>%
-ggplot() +
+Spp.richness <- ggplot() +
   aes(x = month, y = abundance, colour = site, group = site) +
   geom_point() +
   ylim(0, 8) +
@@ -42,10 +37,8 @@ ggplot() +
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1))+
   labs(x = "Month", y = expression("Richness" ~ "(average species count/site visit)"), title = "Seasonal Species Richness")
-bivalve_seasonal_species_richness
 
 #shannons H
-bivalve_seasonal_shannons <-
 bi.wide %>% 
   group_by(year, month, site) %>%
   summarise_at(vars(shan:abundance), mean) %>%
@@ -62,10 +55,8 @@ bi.wide %>%
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1))+
   labs(x = "Month", y = expression("Shannons H"), title = "Seasonal Shannons H")
-bivalve_seasonal_shannons
 
 #bivalve species abundance by tide height and year
-bivalve_tidal_richness <-
 bi.wide %>%
   group_by(year, elevation) %>%
   ggplot() +
@@ -79,10 +70,8 @@ bi.wide %>%
         panel.grid.minor = element_blank(),
                 text             = element_text(size = 13, vjust = 0.1))+
   labs(x = "tide height (m)", y = expression("Richness" ~ "(average species count/site visit)"), title = "Species Richness by Tide Height")
-bivalve_tidal_richness
 
 #bivalve abundance by tide height and year: effort corrected
-bivalve_tidal_abundance <-
 bi.long %>% 
   group_by(year, month, day, site, elevation, quad) %>%
   summarise(abundance = sum(abundance_modified, na.rm = TRUE)) %>%
@@ -98,4 +87,4 @@ bi.long %>%
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1))+
   labs(x = "tide height (m)", y = expression("Bivalve abundance" ~ "(mean count/quadrat)"), title = "Total Bivalve Abundance by Tide Height")
-bivalve_tidal_abundance
+
