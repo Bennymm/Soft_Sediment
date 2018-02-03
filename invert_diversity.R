@@ -13,14 +13,16 @@ in.wide$abundance<- specnumber(
   in.wide[(which(colnames(in.wide) == "amph")) :
             (which(colnames(in.wide) == "unwo"))])
 
+#species accumulation curve; requires GridGraphics and grid packages
 specaccum(in.wide[
   (which(colnames(in.wide) == "amph")) : 
     (which(colnames(in.wide) == "unwo"))]) %>%
-  plot(ci.type="polygon", ci.col="lightyellow", xlab = "quadrat samplings", ylab = "species number")
-
+  plot(ci.type="polygon", ci.col="lightyellow", xlab = "quadrats", ylab = "species number")
+invert_species_accumulation <- recordPlot()
 
 #bivalve diversity(shannons and spp.richness) by site and month; all sites
 #richness
+invert_seasonal_species_richness <-
 in.wide %>% 
   group_by(year, month, site) %>%
   summarise_at(vars(shan:abundance), mean) %>%
@@ -38,6 +40,7 @@ in.wide %>%
   labs(x = "Month", y = expression("Richness" ~ "(species count/site visit)"))
 
 #shannons H
+invert_seasonal_shannons <-
 in.wide %>% 
   group_by(year, month, site) %>%
   summarise_at(vars(shan:abundance), mean) %>%
@@ -55,6 +58,7 @@ in.wide %>%
   labs(x = "Month", y = expression("Shannons H"))
 
 #bivalve species abundance by tide height and year
+invert_tidal_richness <-
 in.wide %>%
   group_by(year, elevation) %>%
   ggplot() +
@@ -67,9 +71,10 @@ in.wide %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1))+
-  labs(x = "tide height (m)", y = expression("Benthic Lvertebrate Richness"))
+  labs(x = "tide height (m)", y = expression("Benthic Invertebrate Richness"))
 
 #bivalve abundance by tide height and year
+invert_tidal_abundance <-
 in.long %>% 
   group_by(year, month, day, site, elevation, quad) %>%
   summarise(abundance = sum(count, na.rm = TRUE)) %>%
@@ -111,12 +116,12 @@ invert_abundance_seasonal <- function(Species, Title) {
 
 #execute above function
 invert_abundance_seasonal("amph", "Amphipoda")
-invert_abundance_seasonal("bacu", expression(italic(Batillaria~spp.)))
+invert_abundance_seasonal("flat", "Phylum: Platyhelminthes")
 invert_abundance_seasonal("bagl", expression(italic(Balanus~glandula)))
 invert_abundance_seasonal("limp", "Limpets")
 invert_abundance_seasonal("myti", expression(italic(Mytilus~spp.)))
 invert_abundance_seasonal("poly", "Polychaeta")
-invert_abundance_seasonal("puve", "Purple~velvet")
+invert_abundance_seasonal("puve", "Nutricola~tantilla")
 invert_abundance_seasonal("rowo", "Nematoda")
 invert_abundance_seasonal("scut", expression(italic(Littorina~scutulata)))
-
+invert_abundance_seasonal("thbi", expression(italic(Bittium~eschrichtii)))

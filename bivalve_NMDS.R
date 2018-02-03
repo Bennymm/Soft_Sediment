@@ -24,4 +24,6 @@ legend("topright", levels(bi.wide.nmds$site),
        pch=1:(length(levels(bi.wide.nmds$site))), 
        lty=1:(length(levels(bi.wide.nmds$site))))
 
+bivalve_NMDS <- recordPlot()
+
 

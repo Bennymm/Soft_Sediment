@@ -14,12 +14,12 @@ bi.wide$abundance<- specnumber(
   bi.wide[(which(colnames(bi.wide) == "bama")) :
           (which(colnames(bi.wide) == "umac"))])
 
-bivalve_species_accumulation <-
+#species accumulation: requires GrabGraphics
 specaccum(bi.wide[
   (which(colnames(bi.wide) == "bama")) : 
   (which(colnames(bi.wide) == "umac"))]) %>%
   plot(ci.type="polygon", ci.col="lightyellow", xlab = "quadrats", ylab = "species number")
-
+bivalve_species_accumulation <- recordPlot()
 
 #bivalve diversity(shannons and spp.richness) by site and month; all sites
 #This is a comparison of seasonal diversity, but also acts as a comparison between years
@@ -41,7 +41,7 @@ ggplot() +
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1))+
-  labs(x = "Month", y = expression("Richness" ~ "(average species count/site visit)"), title = "Seasonal Species Richness")
+  labs(x = "Month", y = expression("Richness" ~ "(average species count/site visit)"))
 bivalve_seasonal_species_richness
 
 #shannons H
@@ -61,7 +61,7 @@ bi.wide %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1))+
-  labs(x = "Month", y = expression("Shannons H"), title = "Seasonal Shannons H")
+  labs(x = "Month", y = expression("Shannons H"))
 bivalve_seasonal_shannons
 
 #bivalve species abundance by tide height and year
@@ -78,7 +78,7 @@ bi.wide %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
                 text             = element_text(size = 13, vjust = 0.1))+
-  labs(x = "tide height (m)", y = expression("Richness" ~ "(average species count/site visit)"), title = "Species Richness by Tide Height")
+  labs(x = "tide height (m)", y = expression("Richness" ~ "(average species count/site visit)"))
 bivalve_tidal_richness
 
 #bivalve abundance by tide height and year: effort corrected
@@ -97,5 +97,5 @@ bi.long %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1))+
-  labs(x = "tide height (m)", y = expression("Bivalve abundance" ~ "(mean count/quadrat)"), title = "Total Bivalve Abundance by Tide Height")
+  labs(x = "tide height (m)", y = expression("Bivalve abundance" ~ "(mean count/quadrat)"))
 bivalve_tidal_abundance

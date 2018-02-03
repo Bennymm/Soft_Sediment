@@ -1,7 +1,7 @@
 #This block of code contains initial data imports, manipulations and reformatting. 
 #These processes may include but are not limited to: merging, transposing, 
 #summarising, new variable derivation, renaming and variable 'type' 
-#conversions. This script must be run before other subsequent scripts.
+#coersion. This script must be run before other subsequent scripts.
 
 #load packages
 library("tidyverse", lib.loc="~/R/win-library/3.4")
@@ -15,6 +15,8 @@ library("markdown", lib.loc="~/R/win-library/3.4")
 library("magrittr", lib.loc="~/R/win-library/3.4")
 library("lubridate", lib.loc="~/R/win-library/3.4")
 library("TropFishR", lib.loc="~/R/win-library/3.4")
+library("gridGraphics", lib.loc="~/R/win-library/3.4")
+library("grid", lib.loc="~/R/win-library/3.4")
 
 # set working directory
 setwd("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files")
@@ -31,18 +33,18 @@ bivalves$species <-
 bivalves$date <- ymd(paste(bivalves$year, bivalves$month, bivalves$day))
 
 ### count of species by quadtrat
-bi.wide <- bivalves %>%
+bi.wide.1 <- bivalves %>%
   group_by(year, month, day, site, elevation, quad, species) %>%
   summarise(abundance = length(species)) %>%
   spread("species", "abundance")
 
 # replace n/a with 0's
-bi.wide[is.na(bi.wide)] <- 0
+bi.wide.1[is.na(bi.wide.1)] <- 0
 # create long data with null observations
-bi.long <- gather(bi.wide, species, abundance, bama:umac)
+bi.long <- gather(bi.wide.1, species, abundance, bama:umac)
 
 #create character for month
-bi.wide$month <- factor(bi.wide$month, 
+bi.wide.1$month <- factor(bi.wide.1$month, 
                         levels = c(1,2,3,4,5,6,7,8,9,10,11,12), 
                         labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
 bi.long$month <- factor(bi.long$month, 

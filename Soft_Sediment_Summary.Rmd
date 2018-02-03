@@ -49,34 +49,45 @@ Due to the diffenences in methodology between years, count data cannot be direct
 Sites were visited monthly or bimonthly(every two months) from June to September with winter sampling events in November and February. 
 
 # Bivalves {.tabset}
-Bivalve diversity abundance and size data are presented in several different formats. Abundance is corrected for differences in sampling effort between years. All bivalves were identified to species aside from _Macoma spp._ less than 15mm. _Macoma spp._ less than 15mm are identified as unknown Macoma. 
+Bivalve diversity, abundance and size data are presented in several different formats. Abundance is corrected for differences in sampling effort between years. All bivalves were identified to species aside from _Macoma spp._ less than 15mm. _Macoma spp._ less than 15mm are identified as unknown Macoma. 
 
 ## Diversity {.tabset}
 
-```{r, message=FALSE, warning= FALSE}
+```{r, message=FALSE, warning= FALSE,, results="hide", fig.show="hide"}
 source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_diversity.R")
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_NMDS.R")
 ```
 
-```{r}
+### Species Accumulation
+```{r, message=FALSE, warning= FALSE}
 bivalve_species_accumulation
 ```
-Bivalve species accumulation curve. 
+Bivalve species accumulation curve. A bit of a strange curve, but we have reached the asymptote. We are capturing the entire bivalve community withing this habitat type (protected intertidal soft sediment).
 
+### Community NMDS {.tabset}
+```{r, message=FALSE, warning= FALSE, results="hide"}
+bivalve_NMDS
+```
+
+### Seasonal Species Richness
 ```{r}
 bivalve_seasonal_species_richness
 ```
 Seasonal species richness for 2016 and 2017.
 
+### Seasonal Shannons H
 ```{r}
 bivalve_seasonal_shannons
 ```
 Seasonal diversity (Shannons H) for 2016 and 2017.
 
+### Species Richness by tide height
 ```{r}
 bivalve_tidal_richness
 ```
 Species richness by tide height and year. Tide height is measured as meters above chart datum(mean low tide). Tide height was restricted to 1.85m in 2016.
 
+### Bivalve Abundance by tide height
 ```{r}
 bivalve_tidal_abundance
 ```
@@ -197,9 +208,191 @@ lfq_year_month("pmac", "umac")
 mean_length_seasonal("umac",2017)
 ```
 
-### Community NMDS {.tabset}
+# Meiofauna (benthic inverts) {.tabset}
+Invertebrate diversity and abundance are presented in several different formats. Most invertebrates were identified to higher levels of classification.
 
-```{r, message=FALSE, warning= FALSE, results="hide"}
-source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/bivalve_NMDS.R")
+```{r, message=FALSE, warning= FALSE}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/invert_base.R")
 ```
+
+## Diversity {.tabset}
+
+```{r, message=FALSE, warning= FALSE, fig.show="hide"}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/invert_diversity.R")
+```
+
+### Species Accumulation Curve
+```{r, message=FALSE, warning= FALSE}
+invert_species_accumulation
+```
+
+### Seasonal Species Richness
+```{r, message=FALSE, warning= FALSE}
+invert_seasonal_species_richness
+```
+
+### Seasonal Shannons H
+```{r, message=FALSE, warning= FALSE}
+invert_seasonal_shannons
+```
+
+### Species Richness by tide height
+```{r, message=FALSE, warning= FALSE}
+invert_tidal_richness
+```
+
+### Invertebrate abundance by tide height
+```{r, message=FALSE, warning= FALSE}
+invert_tidal_abundance
+```
+
+## Individual Species {.tabset}
+These figures display 2017 seasonal abundance by tide height of some of the more common species.
+
+### Amphipods
+```{r, message=FALSE, warning= FALSE}
+invert_abundance_seasonal("amph", "Order: Amphipoda")
+```
+
+### Threaded bittium
+```{r, message=FALSE, warning= FALSE}
+invert_abundance_seasonal("thbi", expression(italic(Bittium~eschrichtii)))
+```
+
+### Acorn Barnacle
+```{r, message=FALSE, warning= FALSE}
+invert_abundance_seasonal("bagl", expression(italic(Balanus~glandula)))
+```
+
+### Limpets
+```{r, message=FALSE, warning= FALSE}
+invert_abundance_seasonal("limp", "Order: Patellogastropoda")
+```
+
+### Mussel
+```{r, message=FALSE, warning= FALSE}
+invert_abundance_seasonal("myti", expression(italic(Mytilus~spp.)))
+```
+
+### Polychaetes
+```{r, message=FALSE, warning= FALSE}
+invert_abundance_seasonal("poly", "Class: Polychaeta")
+```
+
+### Purple dwarf-venus
+```{r, message=FALSE, warning= FALSE}
+invert_abundance_seasonal("puve", "Nutricola~tantilla")
+```
+
+### Roundworms
+```{r, message=FALSE, warning= FALSE}
+invert_abundance_seasonal("rowo", "Phylum: Nematoda")
+```
+
+### Checkered periwinkle
+```{r, message=FALSE, warning= FALSE}
+invert_abundance_seasonal("scut", expression(italic(Littorina~scutulata)))
+```
+
+### Flatworms
+```{r, message=FALSE, warning= FALSE}
+invert_abundance_seasonal("flat", "Phylum: Platyhelminthes")
+```
+
+# Macrophytes {.tabset}
+These figures present seasonal percent cover of individual species and all macrophytes combined. 
+
+```{r, message=FALSE, warning= FALSE, fig.show="hide"}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/macro_base.R")
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/macro_cover.R")
+```
+
+## Sea Lettuce
+```{r, message=FALSE, warning= FALSE}
+mean_cover_seasonal("ulva", expression(italic(Ulva~lactuca)))
+```
+
+## Gutweed
+```{r, message=FALSE, warning= FALSE}
+mean_cover_seasonal("ulin", expression(italic(Ulva~intestinalis)))
+```
+
+## Gracilaria
+```{r, message=FALSE, warning= FALSE}
+mean_cover_seasonal("gras", expression(italic(Gracilaria~spp.)))
+```
+
+## Seagrass
+```{r, message=FALSE, warning= FALSE}
+mean_cover_seasonal("zost", expression(italic(Zostera~marina)))
+```
+
+## Total Cover
+```{r, message=FALSE, warning= FALSE}
+ma_total_cover
+```
+
+# Temperature {.tabset}
+```{r, message=FALSE, warning= FALSE, fig.show="hide"}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/temp20152017.R")
+```
+These figures summarise temperaturde data collected by ibuttons(EIRP Lab) and hobo loggers(Hakai Nearshore) for 2015-2017. There are several months of missing data in 2016 when neither programs had loggers installed.
+
+These loggers are installed in the intertidal zone at 2.2m(mlt) and have been trimmed of their "dry times".
+
+Temperature at depth intervals is also presented. This was achieved by selecing data at specific tide heights. This informs about mixing at these sites.
+
+## Monthly Temperature
+```{r, message=FALSE, warning= FALSE}
+temp_monthly
+```
+
+## Marten: temperature by depth
+```{r, message=FALSE, warning= FALSE}
+temp_Marten
+```
+Temperature at depth intervals. 
+
+## Pruth: temperature by depth
+```{r, message=FALSE, warning= FALSE}
+temp_Pruth
+```
+
+## Piles: temperature by depth
+```{r, message=FALSE, warning= FALSE}
+temp_Piles
+```
+
+## 
+```{r, message=FALSE, warning= FALSE}
+
+```
+
+# Chlorophyll {.tabset}
+Sediment chlorophyll a concentrations were measured at monthly intervals along with seasonal sampling events. 
+
+```{r, message=FALSE, warning= FALSE, fig.show="hide"}
+source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sediment/chlorophyll.R")
+```
+
+## All sites
+```{r, message=FALSE, warning= FALSE, fig.show="hide"}
+chla
+```
+Chlorophyll A concentrations measured in nanomoles per gram sediment. All sites combined for 2016-2017.
+
+## All sites
+```{r, message=FALSE, warning= FALSE, fig.show="hide"}
+chla_bysite
+```
+Chlorophyll A concentrations measured in nanomoles per gram sediment. All sites for 2016-2017.
+
+
+
+
+
+
+
+
+
 

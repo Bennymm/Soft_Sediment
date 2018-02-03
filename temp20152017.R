@@ -5,7 +5,7 @@ library("BiodiversityR", lib.loc="~/R/win-library/3.4")
 library("knitr", lib.loc="~/R/win-library/3.4")
 library("yaml", lib.loc="~/R/win-library/3.4")
 library("markdown", lib.loc="~/R/win-library/3.4")
-library("MASS", lib.loc="~/R/win-library/3.4")
+#library("MASS", lib.loc="~/R/win-library/3.4")
 library("magrittr", lib.loc="~/R/win-library/3.4")
 library("lubridate", lib.loc="~/R/win-library/3.4")
 library("TropFishR", lib.loc="~/R/win-library/3.4")
@@ -141,6 +141,8 @@ temp.monthly <-
   summarise(se = sd(temp, na.rm = TRUE)/sqrt((length(month))), tempm = mean(temp))
 
 #monthly mean temperature
+
+temp_monthly <-
 temp.monthly %>%  
   ggplot() +
   aes(x = month, y = tempm, colour = site, group = site) +
@@ -158,7 +160,8 @@ temp.monthly %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1)) +
-  labs(x = "Month", y = expression(paste("Mean Temperature (",degree,"C)")), title = "Mean monthly temperature")
+  labs(x = "Month", y = expression(paste("Mean Temperature (",degree,"C)")))
+temp_monthly
 
 #categorize tide depth
 temp$depth <- cut(temp$tide, 
@@ -170,6 +173,7 @@ temp.monthly.depth <-
   summarise(se = sd(temp, na.rm = TRUE)/sqrt((length(month))), tempm = mean(temp))
 
 #temperature at depth: Marten
+temp_Marten <-
 temp.monthly.depth %>%  
   filter(site == "marten") %>%
   ggplot() +
@@ -188,9 +192,11 @@ temp.monthly.depth %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1)) +
-  labs(x = "Month", y = expression(paste("Mean Temperature (",degree,"C)")), title = "Marten Beach: temperature at depth")
+  labs(x = "Month", y = expression(paste("Mean Temperature (",degree,"C)")))
+temp_Marten
 
-#temperature at depth: Pruthe Bay
+#temperature at depth: Pruth Bay
+temp_Pruth <-
 temp.monthly.depth %>%  
   filter(site == "hcg") %>%
   ggplot() +
@@ -209,9 +215,11 @@ temp.monthly.depth %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1)) +
-  labs(x = "Month", y = expression(paste("Mean Temperature (",degree,"C)")), title = "Clam Garden: temperature at depth")
+  labs(x = "Month", y = expression(paste("Mean Temperature (",degree,"C)")))
+temp_Pruth
 
 #temperature at depth: Piles
+temp_Piles <-
 temp.monthly.depth %>%  
   filter(site == "piles") %>%
   ggplot() +
@@ -230,4 +238,5 @@ temp.monthly.depth %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1)) +
-  labs(x = "Month", y = expression(paste("Mean Temperature (",degree,"C)")), title = "Piles Beach: temperature at depth")
+  labs(x = "Month", y = expression(paste("Mean Temperature (",degree,"C)")))
+temp_Piles

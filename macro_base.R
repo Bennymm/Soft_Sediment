@@ -1,20 +1,22 @@
 #This block of code contains initial data imports, manipulations and reformatting. 
 #These processes may include but are not limited to: merging, transposing, 
 #summarising, new variable derivation, renaming and variable 'type' 
-#conversions. This script must be run before other subsequent scripts.
+#coersion. This script must be run before other subsequent scripts.
 
 
-library("tidyverse", lib.loc="~/R/win-library/3.4")
-library("dplyr", lib.loc="~/R/win-library/3.4")
-library("vegan", lib.loc="~/R/win-library/3.4")
-library("BiodiversityR", lib.loc="~/R/win-library/3.4")
-library("knitr", lib.loc="~/R/win-library/3.4")
-library("yaml", lib.loc="~/R/win-library/3.4")
-library("markdown", lib.loc="~/R/win-library/3.4")
-library("MASS", lib.loc="~/R/win-library/3.4")
-library("magrittr", lib.loc="~/R/win-library/3.4")
-library("lubridate", lib.loc="~/R/win-library/3.4")
-library("TropFishR", lib.loc="~/R/win-liibrary/3.4")
+#library("tidyverse", lib.loc="~/R/win-library/3.4")
+#library("dplyr", lib.loc="~/R/win-library/3.4")
+#library("vegan", lib.loc="~/R/win-library/3.4")
+#library("BiodiversityR", lib.loc="~/R/win-library/3.4")
+#library("knitr", lib.loc="~/R/win-library/3.4")
+#library("yaml", lib.loc="~/R/win-library/3.4")
+#library("markdown", lib.loc="~/R/win-library/3.4")
+#library("MASS", lib.loc="~/R/win-library/3.4")
+#library("magrittr", lib.loc="~/R/win-library/3.4")
+#library("lubridate", lib.loc="~/R/win-library/3.4")
+#library("TropFishR", lib.loc="~/R/win-liibrary/3.4")
+#library("gridGraphics", lib.loc="~/R/win-library/3.4")
+#library("grid", lib.loc="~/R/win-library/3.4")
 
 macrophytes      <- read.csv ("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/macrophytes.csv")
 
@@ -39,10 +41,15 @@ ma.long <- gather(ma.wide, species, cover, acro:zost)
 
 
 #for mean seasonal %cover of individual species
-ma.cover.y.m.s <-
+ma.cover.y.m.s.e <-
   group_by(ma.long, year, month, site, elevation, species)  %>%
   summarise(se = sd(cover, na.rm = TRUE)/sqrt(length(cover)), 
                     cover = mean(cover, na.rm = TRUE))
+
+ma.cover.y.m.s <-
+  group_by(ma.long, year, month, site, species)  %>%
+  summarise(se = sd(cover, na.rm = TRUE)/sqrt(length(cover)), 
+            cover = mean(cover, na.rm = TRUE))
 
 
 #for seasonal abundance and diversity of individual species
@@ -60,10 +67,11 @@ ma.cover.absolute$total.cover <-
 if_else(ma.cover.absolute$total.cover > 100, 
         100, 
         ma.cover.absolute$total.cover)
+
 #create mean total macrophyte coverage
 ma.cover.total <- ma.cover.absolute %>%
-group_by(year, month, site, elevation) %>%
-  summarise(se = sd(total.cover, na.rm = TRUE)/sqrt((length(elevation))), 
+group_by(year, month, site) %>%
+  summarise(se = sd(total.cover, na.rm = TRUE)/sqrt((length(site))), 
             total.cover = mean(total.cover, na.rm = TRUE))
 
 
