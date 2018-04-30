@@ -102,12 +102,24 @@ g6 <- g6f
 #concatenate Hakai temp
 tempss <- do.call("rbind", list(g1, g2, g3, g4, g5, g6))
 
+#format dat/dime
 tempss$date.time <- mdy_hm(tempss$date.time)
 #coerce to date/time
 tempss$date.time <- as.character.Date(tempss$date.time)
 
+#import dock temp data
+pruthtemp <- read.csv ("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/temperature/pruth_dock_temp_2015_2018.csv")
+
+#format dat/time
+pruthtemp$date.time <- mdy_hm(pruthtemp$date.time)
+pruthtemp$date.time <- as.character.Date(pruthtemp$date.time)
+pruthtemp[c(2,3,5,6,7)] <- NULL
+
+#pair docktemp with SS site data
+temp.ss.dock <- do.call("rbind", list(tempss, pruthtemp))
+
 #working
-mergedhak <- merge(tempss, adamstides,  
+mergedhak <- merge(temp.ss.dock, adamstides,  
                    by = "date.time")
 
 mergedhak$date <- NULL
@@ -127,8 +139,8 @@ temptideSS$month <- factor(temptideSS$month,
                            labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
 
 
-#filter out drying times
-temp <- filter(temptideSS, tide > 2.6)
+#filter out drying times and Pruth dock temperature 
+temp <- filter(temptideSS, tide > 2.6, site != "dock")
 
 #daily temperature temperature for observational data
 temp.daily <-
@@ -141,7 +153,6 @@ temp.monthly <-
   summarise(se = sd(temp, na.rm = TRUE)/sqrt((length(month))), tempm = mean(temp))
 
 #monthly mean temperature
-
 temp_monthly <-
 temp.monthly %>%  
   ggplot() +

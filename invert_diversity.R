@@ -73,6 +73,8 @@ in.wide %>%
         text             = element_text(size = 13, vjust = 0.1))+
   labs(x = "tide height (m)", y = expression("Benthic Invertebrate Richness"))
 
+invert_tidal_richness
+
 #bivalve abundance by tide height and year
 invert_tidal_abundance <-
 in.long %>% 
@@ -91,7 +93,7 @@ in.long %>%
         text             = element_text(size = 13, vjust = 0.1))+
   labs(x = "tide height (m)", y = expression("Benthic Invertebrate Abundance" ~ "(mean count/quadrat)"))
 
-
+invert_tidal_abundance
 #seasonal mean count function for any species with standard error
 invert_abundance_seasonal <- function(Species, Title) {
   filter(in.count.y.m.s, species == Species, year == 2017, count > 0) %>%
@@ -125,3 +127,5 @@ invert_abundance_seasonal("puve", "Nutricola~tantilla")
 invert_abundance_seasonal("rowo", "Nematoda")
 invert_abundance_seasonal("scut", expression(italic(Littorina~scutulata)))
 invert_abundance_seasonal("thbi", expression(italic(Bittium~eschrichtii)))
+invert_abundance_seasonal("lacu", expression(italic(Lacuna~spp)))
+

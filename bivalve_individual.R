@@ -4,7 +4,7 @@
 
 abundance_seasonal <- function(Species, Title){
   filter(bi.long.y.m.s.s, species == Species) %>%
-    filter(year != "2018") %>%
+    filter(year != "2019") %>%
     filter(abundance > 0) %>%
     ggplot() +
     aes(x = month, y = abundance, colour = site, group = site) +
@@ -28,6 +28,9 @@ abundance_seasonal <- function(Species, Title){
 
 bama <-
 abundance_seasonal("bama",expression(italic(Limecola~balthica)))
+bama
+
+
 beno <-
 abundance_seasonal("beno",expression(italic(Macoma~nasuta)))
 bucl <-
@@ -48,5 +51,6 @@ abundance_seasonal("pmac",expression(italic(Macoma~inquinata)))
 #abundance_seasonal("puve",expression(italic(?????????????)))
 umac <-
 abundance_seasonal("umac",expression(italic(Macoma~spp.)))
-
+diwe <-
+abundance_seasonal("diwe",expression(italic(Lirabuccinum~dirum)))
 

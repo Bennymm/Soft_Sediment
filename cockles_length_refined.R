@@ -63,7 +63,7 @@ give.n <- function(x){
 }
 
 #cockle growth at different sites, re-run with other cohorts
-  filter(cockles ,g2 != 0) %>%
+  filter(cockles ,g3 != 0) %>%
   ggplot() +
   aes(x = site, y = g2) +
   geom_boxplot() +
@@ -73,7 +73,7 @@ give.n <- function(x){
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1))+
-  labs(x = "site", y = expression("growth"), title = "2nd year growth")
+  labs(x = "site", y = expression("growth"), title = "1st year growth")
 
   
 #cockle growth at different ages, re-run with different cohorts
@@ -82,7 +82,7 @@ group_by(cockles, site)%>%
   ggplot() +
   aes(x = age, y = g1) +
   geom_boxplot() +
-  stat_summary(fun.data = give.n, geom = "text") +
+  stat_summary(fun.data = give.n, geom = "text", position = position_dodge(width = 0.75)) +
   theme_bw() +
   theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
         #legend.position  = "none",
@@ -95,9 +95,9 @@ group_by(cockles, site)%>%
 group_by(cockles, site)%>%
   filter(g3 != 0) %>%
   ggplot() +
-  aes(x = age2, y = g2) +
+  aes(x = age2, y = g2, fill = site) +
   geom_boxplot() +
-  stat_summary(fun.data = give.n, geom = "text", position = position_dodge(width = 0.7)) +
+  stat_summary(fun.data = give.n, geom = "text", position = position_dodge(width = 0.75)) +
   theme_bw() +
   theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
         #legend.position  = "none",
@@ -110,7 +110,7 @@ group_by(cockles, site)%>%
 group_by(cockles, site)%>%
   filter(g4 != 0) %>%
   ggplot() +
-  aes(x = age3, y = g3) +
+  aes(x = age3, y = g3, fill = site) +
   geom_boxplot() +
   stat_summary(fun.data = give.n, geom = "text") +
   theme_bw() +
@@ -125,7 +125,7 @@ group_by(cockles, site)%>%
 group_by(cockles, site)%>%
   filter(g5 != 0) %>%
   ggplot() +
-  aes(x = age4, y = g4) +
+  aes(x = age4, y = g4, fill = site) +
   geom_boxplot() +
   stat_summary(fun.data = give.n, geom = "text") +
   theme_bw() +
@@ -137,18 +137,54 @@ group_by(cockles, site)%>%
   labs(x = "year", y = expression("growth"), title = "4th year growth")
 
 
-#trial
+#1st year growth
 cockles1styear <-cockles %>%
   group_by(age) %>%
-  summarise(se = sd(g1, na.rm = TRUE)/sqrt((length(year))), 
-            growth1styear = mean(g1, na.rm = TRUE))
+  filter(g2 != 0) %>%
+  summarise(se = sd(g1, na.rm = TRUE)/sqrt((length(age))), 
+            growth = mean(g1, na.rm = TRUE), n = length(age))
+
+cockles1styear$growthyear <- 1
+#2nd year growth
+cockles2ndyear <-cockles %>%
+  group_by(age) %>%
+  filter(g3 != 0) %>%
+  summarise(se = sd(g2, na.rm = TRUE)/sqrt((length(age))), 
+            growth = mean(g2, na.rm = TRUE), n = length(age))
+
+cockles2ndyear$growthyear <- 2
+#3rd year growth
+cockles3rdyear <-cockles %>%
+  group_by(age) %>%
+  filter(g4 != 0) %>%
+  summarise(se = sd(g3, na.rm = TRUE)/sqrt((length(age))), 
+            growth = mean(g3, na.rm = TRUE), n = length(age))
+
+cockles3rdyear$growthyear <- 3
+#4th year growth
+cockles4thyear <-cockles %>%
+  group_by(age) %>%
+  filter(g5 != 0) %>%
+  summarise(se = sd(g4, na.rm = TRUE)/sqrt((length(age))), 
+            growth = mean(g4, na.rm = TRUE), n = length(age))
+
+cockles4thyear$growthyear <- 4
 
 
-ggplot(cockles1styear) +
-  aes(x = age, y = growth1styear) +
-  geom_point() +
-  geom_errorbar(aes(ymin = growth1styear - se,
-                    ymax = growth1styear + se), 
+growthsummary <- rbind(cockles1styear,cockles2ndyear,cockles3rdyear,cockles4thyear)
+
+growthsummary$growthyear <- factor(growthsummary$growthyear, 
+                     levels = c(1,2,3,4), 
+                     labels = c("first", "second", "third", "fourth"))
+
+growthsummary%>%
+  filter(growth != 0) %>%
+ggplot() +
+  aes(x = age, y = growth, colour = growthyear, group = growthyear) +
+  geom_point(position = position_dodge(width = 0.25)) +
+  geom_text(aes(label = n),hjust=2, vjust=0) +
+  geom_errorbar(aes(ymin = growth - se,
+                    ymax = growth + se), 
                 width = 0,
                 size = 1,
                 position = position_dodge(width = 0.25)) +
@@ -158,11 +194,91 @@ ggplot(cockles1styear) +
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         text             = element_text(size = 13, vjust = 0.1)) +
-  labs(x = "year", y = expression("growth(mm)"), title = "1st year growth")
+  labs(x = "year", y = expression("growth(mm)"), title = "cockle growth", colour = "Growth Year") 
 
+str(fit)
+
+#t-test and anova by year
 firstyear2014 <-
   filter(cockles, age == 2014)
 firstyearother <-
   filter(cockles, age == 2016 | age == 2015 | age == 2013 | age == 2012 | age == 2010)
 
 t.test(firstyear2014$g1, firstyearother$g1)
+
+fit <- 
+cockles %>%
+  filter(g2 != 0)
+
+fit<-
+  aov(fit$g1 ~ fit$age)
+summary(fit)
+TukeyHSD(fit)
+str(fit)
+plot(fit)
+
+#t-test and anova by site
+fit <- 
+  cockles %>%
+  filter(g2 != 0)
+fit$site <- as.character(fit$site)
+fit<-
+  aov(fit$g1 ~ fit$site)
+summary(fit)
+plot(fit)
+TukeyHSD(fit)
+
+#Blocking
+fit <- 
+  cockles %>%
+  filter(g2 != 0)
+
+fit<-
+  aov(fit$g1 ~ fit$site * fit$age)
+summary(fit)
+TukeyHSD(fit)
+plot(fit)
+
+
+#above analysis with indices rather than growth
+
+r1 <- cockles$g1/((with(cockles, mean(g1[g1 > 0])))*2)
+r2 <- cockles$g2/((with(cockles, mean(g2[g2 > 0])))*2)
+r3 <- cockles$g3/((with(cockles, mean(g3[g3 > 0])))*2)
+r4 <- cockles$g4/((with(cockles, mean(g4[g4 > 0])))*2)
+r5 <- cockles$g5/((with(cockles, mean(g5[g5 > 0])))*2)
+
+
+cockles_relgrowth <- 
+  gather(cockles, agex, growthx, r1:r5)
+
+cockles_relgrowth <- filter(cockles_relgrowth, growthx != 0 & growthx < 1)
+
+ggplot(cockles_relgrowth) +
+  aes(x = site, y = growthx) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+        legend.position  = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        text             = element_text(size = 13, vjust = 0.1))+
+  labs(x = "site", y = expression("growth"), title = "relative growth by site")
+
+
+fit <- 
+  cockles_relgrowth %>%
+  filter(growthx != 0)
+
+fit<-
+  aov(fit$growthx ~ fit$site)
+summary(fit)
+TukeyHSD(fit)
+str(fit)
+plot(fit)
+
+
+shapiro.test(cockles_relgrowth$growthx)
+hist(cockles_relgrowth$growthx)
+
+ks.test(cockles_relgrowth$growthx, pnorm)

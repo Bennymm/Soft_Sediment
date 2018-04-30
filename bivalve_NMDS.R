@@ -1,11 +1,14 @@
-#Run "bivale_base.R" first
+#Run "bivalve_base.R" first
 
 #NMDS plot of bivalve community by site. Bray-Curtis dissimilarity was used
 
 #corrected effort used
 bi.wide.nmds <- bi.wide %<>%
   group_by(site, year, month)
+
+#ignore 36 warning
 bi.wide.nmds <- summarise_all(bi.wide.nmds, funs(mean))
+
 
 nmds.july2014 <- metaMDS(bi.wide.nmds[(which(colnames(bi.wide) == "bama")) :
                                  (which(colnames(bi.wide) == "umac"))],

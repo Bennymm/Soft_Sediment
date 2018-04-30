@@ -40,11 +40,11 @@ source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sedime
 # Overview
 This document provides a summary of soft sediment sampling completed on Calvert Island from 2016-2017. It contains summaries of the bivalves, benthic invertebrates(meiofauna), macrophytes and sediment chlorophyll content at six sites in Pruth Bay. A summary of seasonal temperature is also provided here. Seasonal sites and protocols changed between 2016 and 2017. 
 
-A site sampling event comprised of random sample locations within the site boundaries. At these sample locations macrophyte diversity and cover, invertebrate diversity and abundance and bivalve diversity, abundance and size data were recorded. 
+A site sampling event is comprised of 15 random sample locations within the site boundaries. At these sample locations macrophyte diversity and cover, invertebrate diversity and abundance and bivalve diversity, abundance and size data were recorded. See protocol document for site locations and specifics. 
 
-In 2016 seasonal sites were Clam Garden Reference(hcg), Marten Beach(marten) and Piles Beach(piles). In 2017 Clam Garden Reference was replaced with Pruth Bay East(pbe) due to difficulties in controlling sampling effort. The 2016 methods used five 0.5m x 0.5m PVC quadrats for bivalves and were excavated to a depth of 20cm for each site sampling event.The 2017 methods used 15 0.25m x 0.25m steel box quadrats for bivalves and were excavated to a depth of 10cm for each site sampling event. For further details on the methods please see protocol documents.  
+In 2016 seasonal sites were Clam Garden Reference(hcg), Marten Beach(marten) and Piles Beach(piles). In 2017 Clam Garden Reference was replaced with Pruth Bay East(pbe) due to sediment characteristics. The 2016 methods used five 0.5m x 0.5m PVC quadrats for bivalves and were excavated to a depth of 20cm for each site sampling event.The 2017 methods used fifteen 0.25m x 0.25m steel box quadrats for bivalves and were excavated to a depth of 10cm for each site sampling event. For further details on the methods please see protocol documents.  
 
-Due to the diffenences in methodology between years, count data cannot be directly compared because of differences in effort. Bivalve abundance is therefore presented as densities rather than counts per quadrat or site visit. These summaries also provide insight into diffences between methods and the potential limitations of either method. 
+Due to the diffenences in methodology between years, count data cannot be directly compared because of differences in effort. Bivalve abundance is therefore presented as densities rather than counts per quadrat or site visit. In addition to informing on the ecology of these systems, these summaries also provide insight into diffences between methods and the potential limitations of either method. 
 
 Sites were visited monthly or bimonthly(every two months) from June to September with winter sampling events in November and February. 
 
@@ -101,27 +101,27 @@ source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sedime
 ```
 
 #### Baltic macoma
-```{r}
+```{r, message=FALSE, warning= FALSE}
 bama
 ```
 
 #### Bent-nose macoma 
-```{r}
+```{r, message=FALSE, warning= FALSE}
 beno
 ```
 
 #### Butter clam
-```{r}
+```{r, message=FALSE, warning= FALSE}
 bucl
 ```
 
 #### Nuttall's cockle
-```{r}
+```{r, message=FALSE, warning= FALSE}
 cocl
 ```
 
 #### Japanese littleneck clam
-```{r}
+```{r, message=FALSE, warning= FALSE}
 jlne
 ```
 
@@ -131,24 +131,30 @@ keve
 ```
 
 #### Softshell clam
-```{r}
+```{r, message=FALSE, warning= FALSE}
 myac
 ```
 
 #### Pacific littleneck clam
-```{r}
+```{r, message=FALSE, warning= FALSE}
 plne
 ```
 
 #### Pointed macoma
-```{r}
+```{r, message=FALSE, warning= FALSE}
 pmac
 ```
 
 #### Juvenile macoma
 Pointend and/or bent-nose macoma.
-```{r}
+```{r, message=FALSE, warning= FALSE}
 umac
+```
+
+#### Dire Whelk
+
+```{r, message=FALSE, warning= FALSE}
+diwe
 ```
 
 ### Length {.tabset}
@@ -208,7 +214,7 @@ lfq_year_month("pmac", "umac")
 mean_length_seasonal("umac",2017)
 ```
 
-# Meiofauna (benthic inverts) {.tabset}
+# Epifauna {.tabset}
 Invertebrate diversity and abundance are presented in several different formats. Most invertebrates were identified to higher levels of classification.
 
 ```{r, message=FALSE, warning= FALSE}
@@ -363,11 +369,6 @@ temp_Pruth
 temp_Piles
 ```
 
-## 
-```{r, message=FALSE, warning= FALSE}
-
-```
-
 # Chlorophyll {.tabset}
 Sediment chlorophyll a concentrations were measured at monthly intervals along with seasonal sampling events. 
 
@@ -376,13 +377,13 @@ source("C:/Users/FABS/Desktop/Rwd_Ben/Soft_sed/working_files/Rscript/Soft_sedime
 ```
 
 ## All sites
-```{r, message=FALSE, warning= FALSE, fig.show="hide"}
+```{r, message=FALSE, warning= FALSE}
 chla
 ```
 Chlorophyll A concentrations measured in nanomoles per gram sediment. All sites combined for 2016-2017.
 
 ## All sites
-```{r, message=FALSE, warning= FALSE, fig.show="hide"}
+```{r, message=FALSE, warning= FALSE}
 chla_bysite
 ```
 Chlorophyll A concentrations measured in nanomoles per gram sediment. All sites for 2016-2017.
